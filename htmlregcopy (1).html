@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Driver Registration</title>
+<link rel="stylesheet" type="text/css" href="driverregcss.css"/>
+</head>
+<body bgcolor="honeyDew">
+<div align="center" >
+
+	<h1 class="heading">Driver Registration</h1>
+	<hr class="line">
+	<form onsubmit="return validation()" action="#">
+	<Label class="label">Name:</Label><input type="text" id="name" placeholder="Enter full name(Firstname Middlename Lastname)" class="input" pattern="^[a-zA-Z ]*$" required />
+	<br><br>
+	<Label class="label">Email:</Label><input type="text" id="email" placeholder="Enter email" class="input" pattern="^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$" required/>
+	<br><br>
+	<Label class="label">Contact:</Label><input type="text" id="contact" placeholder="Enter mobile number" pattern="[1-9]{1}[0-9]{9}" class="input" required/>
+		<br><br>
+	<Label class="label">Aadhaar Id:</Label><input type="text" id="adhar" placeholder="Enter Aadhaar Number"  class="input" pattern="[1-9]{1}[0-9]{9}" required/>
+		<br><br>
+	<Label class="label">Pan Number:</Label><input type="text" id="pan" placeholder="Enter PAN number"  class="input" pattern="^[a-zA-Z0-9]+$" required/>
+		<br><br>
+	<Label class="label">License Number:</Label><input type="text" id="licenseNo" placeholder="Enter your Driver License number" pattern="^[a-zA-Z]+[a-zA-Z0-9-_ ]*[a-zA-Z0-9]$" class="input" required/>
+		<br><br>
+	<Label class="label">License Validity:</Label><input type="date" id="licenseValid" oninput="checkExpiry()" required>
+		<br><br>
+	<Label class="label">State:</Label><select class="list" id="state" onchange="stateDistrict(this.id,'district')" required>
+						<option value="">Select State</option>
+						<option value="Goa">Goa</option>
+						<option value="Maharashtra">Maharashtra</option></select><br>
+<br>
+	<label class="label">District:</label><select  id="district" class="list" onchange="districtCity(this.id,'city')" required>
+				<option>Select District</option>
+					</select>
+		<br><br>
+		<label class="label">City:</label>
+		
+		<select  id="city" class="list" required>
+				<option>Select City</option>
+					</select><br><br>
+	<Label class="label">Address:</Label><input type="text" id="address" placeholder="Enter Address" class="input"  required/>
+	<br>
+	<br>
+		 <label for="birthday" class="label">Date of Birth: </label>
+		 <input type="date" name="birthday" id="birthday"  oninput="allowAgeLimit()" /> 
+   <p id="errormsg" class="error"></p>
+   <input type="submit" value="Register" id="btnReg" class="button" disabled="disabled"/>
+		<br> <br>
+		
+	</form>
+</div>
+
+<script type="text/javascript">
+	
+	
+	
+	function stateDistrict(ipstate, ipdistrict) {
+		var ipstate = document.getElementById(ipstate);
+		var ipdistrict = document.getElementById(ipdistrict);
+		ipdistrict.innerHTML = "";
+		if (ipstate.value == "Maharashtra") {
+			var MaharashtraArray = ["Akola|Akola", "Amravati|Amravati", "Nagpur|Nagpur","Yavatmal|Yavatmal"];
+			for (var district_option in MaharashtraArray) {
+				var valueLablePair = MaharashtraArray[district_option].split("|");
+				var new_District = document.createElement("option");
+				new_District.value = valueLablePair[0];
+				new_District.innerHTML = valueLablePair[1];
+				ipdistrict.options.add(new_District);
+			}
+		}
+		else if (ipstate.value == "Goa") {
+			var GoaArray = ["|Select District", "North Goa|North Goa", "South Goa|South Goa"];
+			for (var district_option in GoaArray) {
+				var valueLablePair = GoaArray[district_option].split("|");
+				var new_District = document.createElement("option");
+				new_District.value = valueLablePair[0];
+				new_District.innerHTML = valueLablePair[1];
+				ipdistrict.options.add(new_District);
+			}
+		}
+		else {
+			document.getElementById("statespan").innerHTML = "Select Proper State";
+		}
+	}
+	function districtCity(ipdistrict, ipcity) {
+		var ipdistrict = document.getElementById(ipdistrict);
+		var ipcity = document.getElementById(ipcity);
+		ipcity.innerHTML = "";
+		if (ipdistrict.value == "Yavatmal") {
+			var YavatmalArray = ["|Select City", "Akola Bazar|Akola Bazar", "Arni|Arni", "Wani|Wani", "Yavatmal|Yavtmal", "Nashik|Nashik"];
+			for (var city_option in YavatmalArray) {
+				var valueLablePair = YavatmalArray[city_option].split("|");
+				var new_city = document.createElement("option");
+				new_city.value = valueLablePair[0];
+				new_city.innerHTML = valueLablePair[1];
+				ipcity.options.add(new_city);
+			}
+		}
+	}
+	function checkExpiry()
+	{
+		var licenseDate= document.getElementById('licenseValid').value;
+
+		var currentDate = (new Date()).getTime();
+		var expDate= (new Date(licenseDate)).getTime();
+		
+		var annualMilliSeconds = 1000 * 60 * 60 * 24 * 365;
+		var age = parseInt(Math.floor((expDate - currentDate) / (annualMilliSeconds)));
+		if (age<=0) {
+			document.getElementById('btnReg').disabled = true;
+			document.getElementById("errormsg").innerHTML = "Age"+age+"!!! License is expired";
+		}
+		else {
+			document.getElementById('btnReg').disabled = false;
+			document.getElementById("errormsg").innerHTML = "Age"+age+"!!! License is valid";
+
+		}
+	}
+	function allowAgeLimit() {
+		//age validation
+		var birthday = document.getElementById('birthday').value;
+
+		var currentDate = (new Date()).getTime();
+		var dobDate = (new Date(birthday)).getTime();
+		var annualMilliSeconds = 1000 * 60 * 60 * 24 * 365;
+		var age = parseInt(Math.floor((currentDate - dobDate) / (annualMilliSeconds)));
+		if (age > 18 && age <= 40) {
+			document.getElementById('btnReg').disabled = false;
+			document.getElementById("errormsg").innerHTML = "Age = " + age + " You Are Eligible to Register";
+		}
+		else if (age < 0) {
+			document.getElementById('btnReg').disabled = true;
+			document.getElementById("errormsg").innerHTML = "Age = " + age + "!!! Age must be positive";
+		}
+		else {
+			document.getElementById('btnReg').disabled = true;
+			document.getElementById("errormsg").innerHTML = "Age = " + age + " !!! Sorry you are not eligible";
+
+		}
+	}
+</script>
+</body>
+</html>
